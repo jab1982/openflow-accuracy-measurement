@@ -10,6 +10,7 @@ All tools are based on input/output compatible with the Open vSwitch tools, and 
 Produces a pcap file, a .flows file (to be fed to `ovs-ofctl add-flows` using stdin) and a .truth file.
 The latter is used as input for the Validator script (see below)
 
+```
 usage: tracegen.py [-h] [-t] [-4 | --v6flowlabels] [-i] [-m M] -n N
                    [--table TABLE] [--actions ACTIONS]
                    [--idle-timeout IDLE_TIMEOUT] [--hard-timeout HARD_TIMEOUT]
@@ -34,10 +35,15 @@ optional arguments:
   --vlan VLAN           Set dl_vlan
   -o OUTFILE, --outfile OUTFILE
                         PCAP output file
-
+```
 
 ## Validator
 
+Reports on the accuracy of gathered OpenFlow measurements (-m) compared to the ground-truth (-t).
+In our experience, most devices add bytes per packet to the byte counter for every flow entry (often, 4 bytes per packet). Use -b to correct for this, or all flows entries will be reported inaccurate.
+
+
+```
 usage: validate.py [-h] -t TRUTHFILE -m MEASUREDFILE [-b BYTE_DELTA] [-v]
 
 optional arguments:
@@ -51,7 +57,7 @@ optional arguments:
                         Possible byte delta per packet, used if switches add
                         bytes consistently for some reason
   -v, --verbose         Be verbose
-
+```
 
 ## Duration variance
 
