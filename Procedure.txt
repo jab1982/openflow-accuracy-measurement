@@ -1,0 +1,27 @@
+
+Generating PCAP and Flows
+
+OF_BRIDGE="tcp:67.17.206.196:9933"
+OVERHEAD=4
+OF_INTF="eth2"
+ACTION="output:4"
+
+a. Download scripts
+
+https://github.com/jab1982/openflow-accuracy-measurement.git
+
+b. Generating 500 flows with 500 packets each. All flows are considered “generic” (no input port) and the only action is to forward to port 4 (sink server)
+
+python tracegen.py -t -4 -m 500 -n 500 --actions $ACTION -o sink_output.pcap
+
+c. Validating results
+
+ovs-ofctl -OOpenFlow13 add-flows $OF_BRIDGE sink_output.pcap.flows
+
+tcpreplay -i $OF_INTF -p 10000 sink_output.pcap
+
+ovs-ofctl -OOpenFlow13 dump-flows $OF_BRIDGE > sink_output.pcap.dump-flows-of13
+
+python validate.py -t sink_output.pcap.truth -m sink_output.pcap.dump-flows-of13 -b $OVERHEAD
+
+ovs-ofctl -OOpenFlow13 del-flows $OF_BRIDGE

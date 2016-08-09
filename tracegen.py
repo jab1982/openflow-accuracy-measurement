@@ -48,6 +48,7 @@ progress10percent = NUM_FLOWS/10.0
 
 TEMPLATES = {}
 TEMPLATES['truth']  = "cookie=0x%x,n_bytes=%d,n_packets=%d\n"
+TEMPLATES['vlan']   = "cookie=0x%x,%s,%s,"
 TEMPLATES['udp']    = "cookie=0x%x,%s,%s,nw_src=%s,nw_dst=%s,tp_src=%d,tp_dst=%d,%s,%s,idle_timeout=%d,hard_timeout=%d,actions=%s\n"#,n_bytes=%d,n_packets=%d"
 TEMPLATES['tcp']    = TEMPLATES['udp']
 TEMPLATES['udp6']   = "cookie=0x%x,%s,%s,ipv6_src=%s,ipv6_dst=%s,tp_src=%d,tp_dst=%d,%s,%s,idle_timeout=%d,hard_timeout=%d,actions=%s\n"#,n_bytes=%d,n_packets=%d"
@@ -83,11 +84,12 @@ for i in xrange(0,NUM_FLOWS):
         l4=UDP(sport=RandNum(1024,65535)._fix(), dport=RandNum(1,1023)._fix())
     
     # Number of packets for this flow
-    ppf=random.randint(1,MAX_PPF)
+    # ppf=random.randint(1,MAX_PPF)
+    ppf=MAX_PPF
 
     # we need frames of >=64 bytes, else padding will occur and measurements will be off
     # Ergo payload is 22 minimum to get v4 to at least 64bytes
-    payloads=Raw(load=[RandString(size=RandNum(22,MAX_PAYLOAD))._fix() for x in xrange(0,ppf)]) 
+    payloads=Raw(load=[RandString(size=RandNum(MAX_PAYLOAD,MAX_PAYLOAD))._fix() for x in xrange(0,ppf)])
     packets = l2/l3/l4/payloads
 
     # Number of bytes for this flow
